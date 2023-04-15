@@ -1,0 +1,109 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Form</title>
+    <style>
+        *{
+            background-color: black;
+            color: white;
+        }
+       
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <form id="employeeForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+        <br><br>
+        <label for="profession">Profession:</label>
+        <input type="text" id="profession" required>
+        <br><br>
+        <label for="age">Age:</label>
+        <input type="number" id="age" required>
+        <br><br>
+        <button type="submit">Add Employee</button><br><br>
+    </form>
+    <div id="addedEmployees">
+        <h2>Added Employees</h2>
+        <ul id="employeeList"></ul>
+    </div>
+    <script>
+        let employees = [];
+        let idCounter = 0;
+
+        const form = document.getElementById('employeeForm');
+        const nameInput = document.getElementById('name');
+        const professionInput = document.getElementById('profession');
+        const ageInput = document.getElementById('age');
+        const employeeList = document.getElementById('employeeList');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const name = nameInput.value;
+            const profession = professionInput.value;
+            const age = ageInput.value;
+            if (name === '' || profession === '' || age === '') {
+                showError('All fields are required.');
+            } else {
+                idCounter++;
+                const employee = { id: idCounter, name, profession, age: parseInt(age) };
+                employees.push(employee);
+                showSuccess('Employee added successfully.');
+                renderEmployeeList();
+                form.reset();
+            }
+        });
+
+        function renderEmployeeList() {
+            employeeList.innerHTML = '';
+            employees.forEach(function (employee) {
+                const li = document.createElement('li');
+                li.textContent = `ID: ${employee.id}, Name: ${employee.name}, Profession: ${employee.profession}, Age: ${employee.age}`;
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', function () {
+                    deleteEmployee(employee);
+                });
+                li.appendChild(deleteButton);
+                employeeList.appendChild(li);
+            });
+        }
+
+        function deleteEmployee(employee) {
+            employees = employees.filter(function (emp) {
+                return emp.id !== employee.id;
+            });
+            renderEmployeeList();
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            form.appendChild(errorDiv);
+            setTimeout(function () {
+                errorDiv.remove();
+            }, 3000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            form.appendChild(successDiv);
+            setTimeout(function () {
+                successDiv.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
